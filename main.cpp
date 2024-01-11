@@ -36,6 +36,32 @@ class PixelBuffer {
         void set_pixel(int x, int y, Color new_color) {
             this->pixels[y][x] = new_color;
         }
+
+        string render() {
+            string output = "";
+            for (int y = 0; y < this->SIZE_Y; y+=2) {
+                for (int x = 0; x < this->SIZE_X; x++) {
+                    
+                    //background color
+                    output += "\033[48;2;";
+                    Color upper_pixel = this->pixels[y][x];
+                    Color lower_pixel = this->pixels[y+1][x];
+                    output += to_string(upper_pixel.red) + ";";
+                    output += to_string(upper_pixel.green) + ";";
+                    output += to_string(upper_pixel.blue) + "m";
+                    
+                    //foreground color
+                    output += "\033[38;2;";
+                    output += to_string(lower_pixel.red) + ";";
+                    output += to_string(lower_pixel.green) + ";";
+                    output += to_string(lower_pixel.blue) + "m";
+                    output += "▄";
+                }
+                output += "\n";
+            }
+
+            return output;
+        }
 };
 
 int main() {
@@ -50,29 +76,6 @@ int main() {
     pixel_buffer.set_pixel(0, 2, c3);
     pixel_buffer.set_pixel(0, 3, c4);
 
-    string textframe = "";
-
-    for (int y = 0; y < pixel_buffer.SIZE_Y; y+=2) {
-        for (int x = 0; x < pixel_buffer.SIZE_X; x++) {
-            
-            //background color
-            textframe += "\033[48;2;";
-            Color upper_pixel = pixel_buffer.get_pixel(x, y);
-            Color lower_pixel = pixel_buffer.get_pixel(x, y+1);
-            textframe += to_string(upper_pixel.red) + ";";
-            textframe += to_string(upper_pixel.green) + ";";
-            textframe += to_string(upper_pixel.blue) + "m";
-            
-            //foreground color
-            textframe += "\033[38;2;";
-            textframe += to_string(lower_pixel.red) + ";";
-            textframe += to_string(lower_pixel.green) + ";";
-            textframe += to_string(lower_pixel.blue) + "m";
-            textframe += "▄";
-        }
-        textframe += "\n";
-    }
-
-    cout << textframe;
+    cout << pixel_buffer.render();
 }
 
