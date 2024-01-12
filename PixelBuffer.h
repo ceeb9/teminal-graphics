@@ -23,6 +23,10 @@ class PixelBuffer {
             this->pixels = std::vector<std::vector<Color>>(input_size_y, std::vector<Color>(input_size_x, Color(0, 0, 0)));
         }
 
+        void FillWithColor(Color color) {
+            this->pixels = std::vector<std::vector<Color>>(this->SIZE_Y, std::vector<Color>(this->SIZE_X, color));
+        }
+
         // get a pixel from the internal pixels matrix
         Color GetPixel(int x, int y) {
             return this->pixels[y][x];

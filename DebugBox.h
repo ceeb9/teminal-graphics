@@ -57,8 +57,9 @@ class DebugBox {
                 return output;
             }
 
-            for (int i = this->lines_to_show; i > 0; i--) {
-                if (i < 0) {continue;}
+            int starting_message_index = this->debug_messages.size() - this->lines_to_show - 1;
+            if (starting_message_index < 0) {starting_message_index = 0;}
+            for (int i = starting_message_index; i < this->debug_messages.size(); i++) {
                 output += this->debug_messages[this->debug_messages.size() - i].ToString();
                 output += "\n";
             }

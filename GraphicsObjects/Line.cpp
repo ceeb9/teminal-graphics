@@ -55,14 +55,14 @@ std::vector<Pixel> Line::Rasterize() {
     // now that swapping is done, we can get the final gradient
     float gradient = (end_y - start_y) / (end_x - start_x);
 
-    this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, std::to_string(gradient));
+    //this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, std::to_string(gradient));
 
     // everything has been normalized, y will only change by a max of +-1 each turn
     // go through each value of x between start and end of line, increase y by gradient each time
     // if steep, switch x and y
     float curr_y = start_y;
     for (int curr_x = floor(start_x); curr_x <= ceil(end_x); curr_x++) {
-        this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, "x: " + std::to_string(curr_x) + " y: " + std::to_string(curr_y));
+        //this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, "x: " + std::to_string(curr_x) + " y: " + std::to_string(curr_y));
 
         DiscretePoint curr_point = steep ? DiscretePoint(round(curr_y), curr_x) : DiscretePoint(curr_x, round(curr_y));
         output_pixels.push_back(Pixel(curr_point, Color(this->color)));

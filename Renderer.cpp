@@ -3,6 +3,7 @@
 #include "Renderer.h"
 
 void Renderer::RasterizeGraphicsObjects() {
+    this->pixel_buffer.FillWithColor(Color(0,0,0));
     for (long unsigned int i = 0; i < this->graphics_objects.size(); i++) {
         this->pixel_buffer.SetPixels(graphics_objects[i]->Rasterize());
     }
