@@ -15,16 +15,16 @@ int main() {
     Color c3(0, 0, 255);
     Color c4(255, 255, 0);
 
-
     r.pixel_buffer.SetPixel(Pixel(0, 0, c1));
     r.pixel_buffer.SetPixel(Pixel(0, 1, c2));
     r.pixel_buffer.SetPixel(Pixel(0, 2, c3));
     r.pixel_buffer.SetPixel(Pixel(0, 3, c4));
 
-    Line l1(Point(40,40), Point(35,72), Color(213,25,125));
+    Line l1(Point(40,40), Point(35,72), Color(213,25,125), r);
     r.graphics_objects.push_back(&l1);
     r.RasterizeGraphicsObjects();
     r.PixelBufferToTextFrame();
     r.WriteTextFrame();
+    r.DrawDebugBox();
 }
 

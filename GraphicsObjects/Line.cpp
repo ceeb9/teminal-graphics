@@ -1,9 +1,10 @@
 #include <iostream>
 #include <cmath>
+#include <string>
 #include <vector>
 #include "Line.h"
 
-Line::Line(Point input_start, Point input_end, Color input_color) {
+Line::Line(Point input_start, Point input_end, Color input_color, Renderer& input_renderer) : renderer(input_renderer) {
     this->start = input_start;
     this->end = input_end;
     this->color = input_color;
@@ -35,7 +36,7 @@ std::vector<Pixel> Line::Rasterize() {
         std::swap(end_x, end_y);
     }
     if (this->start.x > this->end.x) {
-        float start_y = this->end.y;
+        float start_y = this->end.y; // for some reason the compiler says these are unused, but not shadowing them breaks it
         float end_y = this->start.y;
         float start_x = this->end.x;
         float end_x = this->start.x;
@@ -44,14 +45,15 @@ std::vector<Pixel> Line::Rasterize() {
     // now that swapping is done, we can get the final gradient
     float gradient = (end_y - start_y) / (end_x - start_x);
 
-    std::cout << gradient << "\n";
+    this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, std::to_string(gradient));
 
     // everything has been normalized, y will only change by a max of +-1 each turn
     // go through each value of x between start and end of line, increase y by gradient each time
     // if steep, switch x and y
     float curr_y = start_y;
     for (int curr_x = floor(start_x); curr_x <= ceil(end_x); curr_x++) {
-        std::cout << "x: " << curr_x << " y: " << curr_y << "\n";
+        this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, "x: " + std::to_string(curr_x) + " y: " + std::to_string(curr_y));
+
         DiscretePoint curr_point = steep ? DiscretePoint(round(curr_y), curr_x) : DiscretePoint(curr_x, round(curr_y));
         output_pixels.push_back(Pixel(curr_point, Color(this->color)));
         curr_y += gradient;

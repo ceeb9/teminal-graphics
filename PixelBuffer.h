@@ -31,7 +31,7 @@ class PixelBuffer {
 
         // convenience method to set a vector of pixels
         void SetPixels(std::vector<Pixel> new_pixels) {
-            for (int i = 0; i < new_pixels.size(); i++) {
+            for (long unsigned int i = 0; i < new_pixels.size(); i++) {
                 this->SetPixel(new_pixels[i]);
             }
         }

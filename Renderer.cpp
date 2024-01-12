@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 void Renderer::RasterizeGraphicsObjects() {
-    for (int i = 0; i < this->graphics_objects.size(); i++) {
+    for (long unsigned int i = 0; i < this->graphics_objects.size(); i++) {
         this->pixel_buffer.SetPixels(graphics_objects[i]->Rasterize());
     }
 }
@@ -35,7 +35,4 @@ void Renderer::PixelBufferToTextFrame() {
     this->text_frame = output;
 }
 
-void Renderer::WriteTextFrame() {
-    std::cout << "\n";
-    std::cout << text_frame;
-}
+
