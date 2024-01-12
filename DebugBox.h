@@ -49,6 +49,14 @@ class DebugBox {
 
         std::string GetVisibleLines() {
             std::string output = "";
+            if (this->lines_to_show == -1) {
+                for (int i = 0; i < this->debug_messages.size(); i++) {
+                    output += this->debug_messages[i].ToString();
+                    output += "\n";
+                }
+                return output;
+            }
+
             for (int i = this->lines_to_show; i > 0; i--) {
                 if (i < 0) {continue;}
                 output += this->debug_messages[this->debug_messages.size() - i].ToString();

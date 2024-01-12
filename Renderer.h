@@ -13,14 +13,9 @@ class Renderer {
         std::string text_frame;
         DebugBox debug_box;
 
-        Renderer() {
-            this->pixel_buffer = PixelBuffer(40, 40);
+        Renderer(int size_x, int size_y, int debug_lines_to_show) : pixel_buffer(PixelBuffer(size_x, size_y, *this)) {
             this->text_frame = "you should never see this text, it means a text frame was never created";
-        }
-
-        Renderer(int size_x, int size_y) {
-            this->pixel_buffer = PixelBuffer(size_x, size_y);
-            this->text_frame = "you should never see this text, it means a text frame was never created";
+            this->debug_box.lines_to_show = debug_lines_to_show;
         }
         // update the pixel buffer with newly rasterized graphics objects
         void RasterizeGraphicsObjects();

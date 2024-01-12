@@ -15,6 +15,16 @@ Line::Line(Point input_start, Point input_end, Color input_color, Renderer& inpu
     this->transform.rotation = 0;
 }
 
+void Line::SetPosition(Point new_position) {
+    float offset_x = new_position.x - this->transform.position.x;
+    float offset_y = new_position.y - this->transform.position.y;
+    this->transform.position = new_position;
+    this->start.x = this->start.x + offset_x;
+    this->start.y = this->start.y + offset_y;
+    this->end.x = this->end.x + offset_x;
+    this->end.y = this->end.y + offset_y;
+}
+
 std::vector<Pixel> Line::Rasterize() {
     //line drawing algorithm
     std::vector<Pixel> output_pixels;
