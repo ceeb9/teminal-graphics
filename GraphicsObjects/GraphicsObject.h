@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "../Datatypes.h"
+#include "../Transform.h"
 
 class GraphicsObject {
     protected:
