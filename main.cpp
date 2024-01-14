@@ -22,20 +22,27 @@ int main() {
     r.pixel_buffer.SetPixel(Pixel(0, 2, c3));
     r.pixel_buffer.SetPixel(Pixel(0, 3, c4));
 
-    Line l1(Point(0,40), Point(79,40), Color(213,25,125), r);
+    Line l1(30, Point(40, 40), 0, Color(213,25,125), r);
     r.graphics_objects.push_back(&l1);
+    while (true) {
+        r.RasterizeGraphicsObjects();
+        r.PixelBufferToTextFrame();
+        r.WriteTextFrame();
+        //r.DrawDebugBox();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        l1.transform.RotateClockwise(10);
+        cout << "\x1b[1;37;40m";
+        for (int i = 0; i < l1.points.size(); i++) {
+            cout << "x: " << l1.points[i].x << " y: " << l1.points[i].y;
+        }
+
+    }
+
     r.RasterizeGraphicsObjects();
     r.PixelBufferToTextFrame();
     r.WriteTextFrame();
-    r.DrawDebugBox();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    l1.SetPosition(Point(39.5,70));
-
-    r.RasterizeGraphicsObjects();
-    r.PixelBufferToTextFrame();
-    r.WriteTextFrame();
-    r.DrawDebugBox();
+    //r.DrawDebugBox();
 }
 

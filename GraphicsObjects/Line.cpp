@@ -4,71 +4,37 @@
 #include <vector>
 #include "Line.h"
 
-Line::Line(Point input_start, Point input_end, Color input_color, Renderer& input_renderer) : renderer(input_renderer) {
-    this->start = input_start;
-    this->end = input_end;
-    this->color = input_color;
-    // construct transform given start and end
-    this->transform.position.x = (input_start.x + input_end.x) / 2;
-    this->transform.position.y = (input_start.y + input_end.y) / 2;
-    this->transform.origin = this->transform.position;
-    this->transform.rotation = 0;
-}
+Line::Line(float input_length, Point input_position, float input_rotation, Color input_color, Renderer& input_renderer) : 
+    renderer(input_renderer) {
+    this->length = input_length;
 
-void Line::SetPosition(Point new_position) {
-    float offset_x = new_position.x - this->transform.position.x;
-    float offset_y = new_position.y - this->transform.position.y;
-    this->transform.position = new_position;
-    this->start.x = this->start.x + offset_x;
-    this->start.y = this->start.y + offset_y;
-    this->end.x = this->end.x + offset_x;
-    this->end.y = this->end.y + offset_y;
+    this->points.push_back(Point(input_position.x - length/2, input_position.y)); //start
+    this->points.push_back(Point(input_position.x + length/2, input_position.y)); //end
+    this->transform = Transform(input_position, input_position, 0, &this->points); // rotation is 0 so we can rotate the points properly
+    this->transform.SetRotation(input_rotation);
+
+    this->color = input_color;
 }
 
 std::vector<Pixel> Line::Rasterize() {
-    //line drawing algorithm
+    // bresenham's, taken from http://members.chello.at/~easyfilter/bresenham.html
     std::vector<Pixel> output_pixels;
+    int x0 = this->points[0].x;
+    int y0 = this->points[0].y;
+    int x1 = this->points[1].x;
+    int y1 = this->points[1].y;
+    int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+    int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+    int err = dx+dy, e2; /* error value e_xy */
+ 
+   for(;;){  /* loop */
+      output_pixels.push_back(Pixel(DiscretePoint(x0, y0), this->color));
+      if (x0==x1 && y0==y1) break;
+      e2 = 2*err;
+      if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */
+      if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
+   }
     
-    // check if the line is steep (gradient > 1) if we need to do extra swapping
-    float initial_gradient = (this->end.y - this->start.y) / (this->end.x - this->start.x);
-    bool steep = false;
-    if (std::fabs(initial_gradient) > 1) {
-        steep = true;
-    }
-
-    // do a lot of swapping of coords to make sure the gradient is +-1, and goes from left to right
-    float start_y = this->start.y;
-    float end_y = this->end.y;
-    float start_x = this->start.x;
-    float end_x = this->end.x;
-    if (steep) {
-        std::swap(start_x, start_y);
-        std::swap(end_x, end_y);
-    }
-    if (this->start.x > this->end.x) {
-        float start_y = this->end.y; // for some reason the compiler says these are unused, but not shadowing them breaks it
-        float end_y = this->start.y;
-        float start_x = this->end.x;
-        float end_x = this->start.x;
-    }
-
-    // now that swapping is done, we can get the final gradient
-    float gradient = (end_y - start_y) / (end_x - start_x);
-
-    //this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, std::to_string(gradient));
-
-    // everything has been normalized, y will only change by a max of +-1 each turn
-    // go through each value of x between start and end of line, increase y by gradient each time
-    // if steep, switch x and y
-    float curr_y = start_y;
-    for (int curr_x = floor(start_x); curr_x <= ceil(end_x); curr_x++) {
-        //this->renderer.debug_box.AddMessage(DebugMessageErrorLevel::INFO, "x: " + std::to_string(curr_x) + " y: " + std::to_string(curr_y));
-
-        DiscretePoint curr_point = steep ? DiscretePoint(round(curr_y), curr_x) : DiscretePoint(curr_x, round(curr_y));
-        output_pixels.push_back(Pixel(curr_point, Color(this->color)));
-        curr_y += gradient;
-    }
-
     return output_pixels;
 }
 

@@ -7,11 +7,7 @@ class GraphicsObject {
         Transform transform;
         Color color;
     public:
+        std::vector<Point> points;
         virtual std::vector<Pixel> Rasterize() = 0;
-
-        virtual void SetPosition(Point new_position) = 0;
-
-        Point GetPosition() {
-            return this->transform.position;
-        }
+        GraphicsObject() : transform() {}
 };
