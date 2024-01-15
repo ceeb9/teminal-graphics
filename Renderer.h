@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -25,7 +26,6 @@ class Renderer {
 
         // write the current text frame to the screen
         void WriteTextFrame() {
-            std::cout << "\033[0;0f"; // put us back at 0,0
             std::cout << text_frame;
         }
 

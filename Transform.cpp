@@ -1,4 +1,3 @@
-#pragma once
 #include "Transform.h"
 
 Transform::Transform(Point input_position, Point input_origin, float input_rotation, std::vector<Point>* input_points) : points(input_points) {

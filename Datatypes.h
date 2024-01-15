@@ -13,6 +13,19 @@ class Color {
             this->green = input_green;
             this->blue = input_blue;
         }
+
+        bool operator==(const Color& other) {
+            if (this->red == other.red && this->green == other.green && this->blue == other.blue) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        bool operator!=(const Color& other) {
+            return !(*this == other);
+        }
 };
 
 class Point {

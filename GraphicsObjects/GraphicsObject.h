@@ -6,8 +6,8 @@
 class GraphicsObject {
     protected:
         Transform transform;
-        Color color;
     public:
+        Color color;
         std::vector<Point> points;
         virtual std::vector<Pixel> Rasterize() = 0;
         GraphicsObject() : transform() {}
