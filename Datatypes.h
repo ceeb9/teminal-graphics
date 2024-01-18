@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <string>
 
 enum class InputStateChange {
     Q_UP,

@@ -14,10 +14,12 @@ class SceneManager {
     public:
         Renderer renderer;
         //InputManager input_manager;
+        bool write_debug_info;
+        int max_debug_lines;
 
         int active_scene_id;
         
-        SceneManager(int canvas_size_x, int canvas_size_y);
+        SceneManager(int canvas_size_x, int canvas_size_y, bool write_debug_info, int max_debug_lines);
 
         void AddScene(Scene* new_scene, int id);
 

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "Datatypes.h"
 #define ANSI_RESET_COLOR "\033[1;0;49m"
 #define ANSI_SET_CURSOR(x, y) ("\033[" + std::to_string(y) + ";" + std::to_string(x) + "H")
@@ -20,7 +22,7 @@ class Renderer {
         void PixelToText();
         void WriteTextToScreen();
     public:
-        Renderer(int size_x, int size_y) {
+        Renderer(int size_x, int size_y) : SIZE_X(size_x), SIZE_Y(size_y) {
             SIZE_X = size_x;
             SIZE_Y = size_y;
             framecount = 0;
@@ -45,7 +47,10 @@ class Renderer {
 class DebugBox {
     private:
         // private constructor, delete assignment and copy constructor to enforce singleton
-        DebugBox() {}
+        struct winsize w;
+        DebugBox() {
+            ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        }
         DebugBox(const DebugBox&) = delete;
         DebugBox& operator=(const DebugBox&) = delete;
         int times_displayed = 0;
@@ -73,7 +78,9 @@ class DebugBox {
             std::cout << ANSI_RESET_COLOR;
             for (int i = 0; i < lines_to_print; i++) {
                 std::cout << ANSI_SET_CURSOR(x, i);
-                std::cout << messages[messages.size()-1-i] + "\n";
+                int blank_amount = w.ws_col - (x + messages[messages.size()-1-i].length());
+                std::string blank_out_string(blank_amount, ' ');
+                std::cout << messages[messages.size()-1-i] + blank_out_string;
             }
         }
 };

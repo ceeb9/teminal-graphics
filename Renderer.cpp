@@ -12,14 +12,18 @@ void Renderer::AddPixelsToBuffer(std::vector<Pixel> pixels) {
 
     // write pixels (if possible)
     for (int i = 0; i < pixels.size(); i++) {
-        if (pixels[i].pos.x < 0 || pixels[i].pos.x > SIZE_X) {
-            // tried to write oob
+        if (pixels[i].pos.y < -100 || pixels[i].pos.x < -100 || pixels[i].pos.y > SIZE_Y+100 || pixels[i].pos.x > SIZE_X+100) {
+            DEBUG_BOX.AppendMessage("SOMETHING IS WRONG: tried to write pixel at x: "+std::to_string(pixels[i].pos.x)+" y: "+std::to_string(pixels[i].pos.y));
+        }
+        if (pixels[i].pos.x < 0 || pixels[i].pos.x >= SIZE_X) {
+            //DEBUG_BOX.AppendMessage("tried to write out of bounds: (" + std::to_string(pixels[i].pos.x) + ", " + std::to_string(pixels[i].pos.y) + ")");
             continue;
         }
-        if (pixels[i].pos.y < 0 || pixels[i].pos.y > SIZE_X) {
-            // tried to write oob
+        if (pixels[i].pos.y < 0 || pixels[i].pos.y >= SIZE_Y) {
+            //DEBUG_BOX.AppendMessage("tried to write out of bounds: (" + std::to_string(pixels[i].pos.x) + ", " + std::to_string(pixels[i].pos.y) + ")");
             continue;
         }
+
         pixel_buffer[pixels[i].pos.y][pixels[i].pos.x] = pixels[i].color;
     }
 }

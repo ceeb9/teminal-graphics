@@ -6,10 +6,13 @@
 #include <chrono>
 #include <thread>
 
-SceneManager::SceneManager(int canvas_size_x, int canvas_size_y) : 
+SceneManager::SceneManager(int canvas_size_x, int canvas_size_y, bool i_write_debug_info, int i_max_debug_lines) : 
     renderer(Renderer(canvas_size_x, canvas_size_y))
     //input_manager() 
-    {}
+    {
+        this->write_debug_info = i_write_debug_info;
+        this->max_debug_lines = i_max_debug_lines;
+    }
 
 void SceneManager::AddScene(Scene* new_scene, int id) {
     this->scene_array[id] = new_scene;
@@ -24,7 +27,7 @@ void SceneManager::MainLoop() {
         //input_manager.clear_input_queue = true;
 
         curr_psi.canvas_size_x = renderer.GetWidth();
-        curr_psi.canvas_size_x = renderer.GetHeight();
+        curr_psi.canvas_size_y = renderer.GetHeight();
         curr_psi.framecount = renderer.GetFramecount();
 
         // update sprite states
@@ -35,8 +38,10 @@ void SceneManager::MainLoop() {
         renderer.RenderFromPixels(pixels);
 
         // print debug box
-        DEBUG_BOX.DisplayMessages(10, renderer.GetWidth()+4);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        if (write_debug_info) {
+            DEBUG_BOX.DisplayMessages(max_debug_lines, renderer.GetWidth()+2);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
     }
     std::cout << "\e[?25h";
 }
