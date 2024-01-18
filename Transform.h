@@ -1,28 +1,31 @@
 #pragma once
-#include "./Datatypes.h"
+#include "Datatypes.h"
+#include <vector>
 
 class Transform {
     private:
-        Point origin;
-        Point position;
+        DiscretePoint position;
+        int z_index;
+        DiscretePoint origin;
         float rotation;
+        float displayed_rotation_error;
 
     public:
-        std::vector<Point>* points;
+        std::vector<DiscretePoint>* points;
 
         Transform(){}
 
-        Transform(Point input_position, Point input_origin, float input_rotation, std::vector<Point>* input_points);
+        Transform(DiscretePoint input_position, DiscretePoint input_origin, float input_rotation, std::vector<DiscretePoint>* input_points);
 
-        const Point& GetOrigin();
+        const DiscretePoint& GetOrigin();
 
-        const Point& GetPosition();
+        const DiscretePoint& GetPosition();
 
-        void SetPosition(Point new_position);
+        void SetPosition(DiscretePoint new_position);
 
         const float& GetRotation();
 
-        Point RotatePointClockwise(float degrees_to_rotate, Point point_to_rotate);
+        DiscretePoint RotatePointClockwise(float degrees_to_rotate, DiscretePoint point_to_rotate);
 
         void RotateClockwise(float degrees_to_rotate);
 

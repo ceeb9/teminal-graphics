@@ -1,17 +1,39 @@
 #pragma once
-#include <cmath>
-#include <vector>
+#include <list>
+
+enum class InputStateChange {
+    Q_UP,
+    Q_DOWN,
+    W_UP,
+    W_DOWN
+};
+
+class ProgramStateInfo {
+    public:
+        int framecount;
+        std::list<InputStateChange> input_queue;
+        int canvas_size_x;
+        int canvas_size_y;
+};
+
+class DiscretePoint {
+    public:
+        int x;
+        int y;
+        DiscretePoint() : x(0), y(0){};
+        DiscretePoint(int new_x, int new_y) : x(new_x), y(new_y){};
+};
 
 class Color {
     public:
         int red;
         int green;
         int blue;
-        Color() {}
-        Color(int input_red, int input_green, int input_blue) {
-            this->red = input_red;
-            this->green = input_green;
-            this->blue = input_blue;
+        Color(){}
+        Color(int r, int g, int b) {
+            this->red = r;
+            this->green = g;
+            this->blue = b;
         }
 
         bool operator==(const Color& other) {
@@ -28,40 +50,9 @@ class Color {
         }
 };
 
-class Point {
-    public:
-        float x;
-        float y;
-        Point() {}
-        Point(float input_x, float input_y) {
-            this->x = input_x;
-            this->y = input_y;
-        }
-};
-
-class DiscretePoint {
-    public:
-        int x;
-        int y;
-        DiscretePoint() {}
-        DiscretePoint(int input_x, int input_y) {
-            this->x = input_x;
-            this->y = input_y;
-        }
-};
-
 class Pixel {
     public:
-        DiscretePoint pos;
         Color color;
-        Pixel() {}
-        Pixel(DiscretePoint input_point, Color input_color) {
-            this->pos = input_point;
-            this->color = input_color;
-        }
-        Pixel(int x, int y, Color input_color) {
-            this->pos = DiscretePoint(x, y);
-            this->color = input_color;
-        }
+        DiscretePoint pos;
+        Pixel(DiscretePoint p, Color c) : color(c), pos(p) {}
 };
-

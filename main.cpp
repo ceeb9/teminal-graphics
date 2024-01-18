@@ -1,70 +1,83 @@
-#include <ios>
-#include <string>
+#include <functional>
 #include <iostream>
+#include <string>
 #include <vector>
-#include <cmath>
-#include <chrono>
-#include <thread>
-#include <sys/ioctl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include "Datatypes.h"
-#include "GraphicsObjects/Line.h"
 #include "Renderer.h"
-using namespace std;
+#include "Sprite.h"
+#include "Scene.h"
+#include "SceneManager.h"
+
+class Line : public Sprite {
+    public:
+        std::vector<DiscretePoint> points;
+        Color color;
+        float length;
+
+        Line(float input_length, DiscretePoint center, float rotation, Color input_color) { 
+            enabled = true;
+            visible = true;
+            length = input_length;
+            color = input_color;
+            points.push_back(DiscretePoint(center.x - length/2, center.y)); //start
+            points.push_back(DiscretePoint(center.x + length/2, center.y)); //end
+            transform = Transform(center, center, 0, &this->points); // rotation is 0 so we can rotate the points properly
+            transform.SetRotation(rotation);
+        }
+
+        RasterizedSprite Rasterize() {
+            // bresenham's, taken from http://members.chello.at/~easyfilter/bresenham.html
+            std::vector<Pixel> output_pixels;
+            int x0 = this->points[0].x;
+            int y0 = this->points[0].y;
+            int x1 = this->points[1].x;
+            int y1 = this->points[1].y;
+            int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+            int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+            int err = dx+dy, e2; /* error value e_xy */
+
+            for(;;) {  /* loop */
+                output_pixels.push_back(Pixel(DiscretePoint(x0, y0), color));
+                if (x0==x1 && y0==y1) break;
+                e2 = 2*err;
+                if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */
+                if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
+            }
+
+            return RasterizedSprite(output_pixels, 0);
+        }
+};
+
+class DemoScene : public Scene {
+    public:
+        Line* l1;
+
+        std::function<void(ProgramStateInfo)> l1_onframe = [this](ProgramStateInfo program_state_info){
+            DEBUG_BOX.AppendMessage("running l1 onframe code");
+            if (program_state_info.framecount % 1 == 0) {
+                if (l1->color == Color(255,255,255)) {
+                    l1->color = Color(255,0,0);
+                }
+                else {
+                    l1->color = Color(255,255,255);
+                }
+
+                l1->transform.RotateClockwise(5);
+            }
+        };
+
+        DemoScene() {
+            l1 = new Line(10, DiscretePoint(50,50), 0, Color(255,255,255));
+            l1->OnFrame = l1_onframe;
+
+            sprite_keys.push_back("0");
+            sprite_table["0"] = l1;
+        }
+};
 
 int main() {
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    Renderer r(w.ws_col, (w.ws_row*2)-10, 10);
-    int center_x = 40;
-    int center_y = 40;
-
-    Line l1(20, Point(center_x, center_y), 0, Color(213,25,125), r);
-    Line l2(20, Point(center_x, center_y), 0, Color(213,25,125), r);
-    r.graphics_objects.push_back(&l1);
-    r.graphics_objects.push_back(&l2);
-
-    vector<Line*> temp_lines;
-
-    int framecount = 0;
-    int position_counter = 0;
-    while (true) {
-        l1.transform.RotateClockwise(-0.2);
-        l2.transform.RotateClockwise(0.2);
-        l1.transform.SetPosition(Point(cos((float)framecount/200)*30+center_x, sin((float)framecount/200)*30+center_y));
-        l2.transform.SetPosition(Point(cos((float)framecount/200)*30+center_x, sin((float)framecount/200)*30+center_y));
-
-        for (int i = 0; i < temp_lines.size(); i++) {
-            if (temp_lines[i]->color.red > 0) {
-                temp_lines[i]->color.red -= 1;
-                temp_lines[i]->color.green -= 1;
-                temp_lines[i]->color.blue -= 1;
-            }
-        }
-
-        if (framecount % 3 == 0) {
-            Point new_point = l1.transform.GetPosition();
-            temp_lines.push_back(new Line (1, new_point, 0, Color(255,255,255), r));
-            r.graphics_objects.push_back(temp_lines[temp_lines.size()-1]);
-        }
-
-        if (temp_lines.size() > 100) {
-            r.graphics_objects.erase(r.graphics_objects.begin()+2);
-            delete *temp_lines.begin();
-            temp_lines.erase(temp_lines.begin());
-        }
-
-        r.RasterizeGraphicsObjects();
-        r.PixelBufferToTextFrame();
-        r.WriteTextFrame();
-        r.DrawDebugBox();
-        framecount++;
-        //std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    r.RasterizeGraphicsObjects();
-    r.PixelBufferToTextFrame();
-    r.WriteTextFrame();
+    DemoScene test_scene;
+    SceneManager manager(100, 100);
+    manager.AddScene(&test_scene, 0);
+    manager.active_scene_id = 0;
+    manager.MainLoop();
 }
-

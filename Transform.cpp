@@ -1,20 +1,23 @@
 #include "Transform.h"
+#include <iostream>
+#include <cmath>
 
-Transform::Transform(Point input_position, Point input_origin, float input_rotation, std::vector<Point>* input_points) : points(input_points) {
-    this->position = input_position;
-    this->origin = input_origin;
-    this->rotation = input_rotation;
-}
+Transform::Transform(DiscretePoint input_position, DiscretePoint input_origin, float input_rotation, std::vector<DiscretePoint>* input_points) : 
+    displayed_rotation_error(0),
+    position(input_position),
+    origin(input_origin),
+    rotation(input_rotation),
+    points(input_points) {}
 
-const Point& Transform::GetOrigin() {
+const DiscretePoint& Transform::GetOrigin() {
     return this->origin;
 }
 
-const Point& Transform::GetPosition() {
+const DiscretePoint& Transform::GetPosition() {
     return this->position;
 }
 
-void Transform::SetPosition(Point new_position) {
+void Transform::SetPosition(DiscretePoint new_position) {
     float offset_x = new_position.x - this->position.x;
     float offset_y = new_position.y - this->position.y;
     this->position = new_position;
@@ -30,19 +33,29 @@ const float& Transform::GetRotation() {
     return this->rotation;
 }
 
-Point Transform::RotatePointClockwise(float degrees_to_rotate, Point point_to_rotate) {
+DiscretePoint Transform::RotatePointClockwise(float degrees_to_rotate, DiscretePoint point_to_rotate) {
     float temp_x = point_to_rotate.x - this->origin.x;
     float temp_y = point_to_rotate.y - this->origin.y;
-    float radians = degrees_to_rotate * M_PI / 180;
+    float radians = (degrees_to_rotate+displayed_rotation_error) * M_PI / 180;
+
+    // perform matrix multiply to get new coords
     float new_x = (temp_x * std::cos(radians)) - (temp_y * std::sin(radians)) + this->origin.x;
     float new_y = (temp_x * std::sin(radians)) + (temp_y * std::cos(radians)) + this->origin.y;
+
+    // clamp values
     if (this->rotation > 360) {
         this->rotation -= 360;
     }
     else if (this->rotation < 0) {
         this->rotation += 360;
     }
-    return Point(new_x, new_y);
+
+    // add error if points did not move
+    if (std::round(new_x) == point_to_rotate.x && std::round(new_y) == point_to_rotate.y) {
+        displayed_rotation_error += degrees_to_rotate;
+    }
+
+    return DiscretePoint(std::round(new_x), std::round(new_y));
 }
 
 void Transform::RotateClockwise(float degrees_to_rotate) {
