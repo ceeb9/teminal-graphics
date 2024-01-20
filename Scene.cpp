@@ -8,7 +8,7 @@
 /*
  * run the onframe function of each sprite in the scene
  */
-void Scene::OnFrame(ProgramStateInfo program_state_info) {
+void Scene::UpdateSprites(ProgramStateInfo program_state_info) {
     for (int i = 0; i < sprite_keys.size(); i++) {
         if (sprite_table[sprite_keys[i]]->enabled) {
             sprite_table[sprite_keys[i]]->OnFrame(program_state_info);

@@ -1,7 +1,6 @@
 #include <iostream>
 #include "SceneManager.h"
 #include "Datatypes.h"
-#include "InputManager.h"
 #include "Scene.h"
 #include <chrono>
 #include <thread>
@@ -29,9 +28,13 @@ void SceneManager::MainLoop() {
         curr_psi.canvas_size_x = renderer.GetWidth();
         curr_psi.canvas_size_y = renderer.GetHeight();
         curr_psi.framecount = renderer.GetFramecount();
+        curr_psi.scene = scene_array[active_scene_id];
+
+        // run scene logic
+        scene_array[active_scene_id]->OnFrame(curr_psi);
 
         // update sprite states
-        scene_array[active_scene_id]->OnFrame(curr_psi);
+        scene_array[active_scene_id]->UpdateSprites(curr_psi);
 
         // get the pixels to render
         std::vector<Pixel> pixels = scene_array[active_scene_id]->RasterizeSprites();

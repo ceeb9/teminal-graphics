@@ -69,3 +69,10 @@ void Transform::SetRotation(float new_rotation) {
     float offset = new_rotation - this->rotation;
     this->RotateClockwise(offset);
 }
+
+float Transform::GetDistanceTo(DiscretePoint other_point) {
+    int delta_x = other_point.x - this->position.x;
+    int delta_y = other_point.y - this->position.y;
+    float dist = std::sqrt(std::pow(delta_x, 2) + std::pow(delta_y, 2));
+    return dist;
+}

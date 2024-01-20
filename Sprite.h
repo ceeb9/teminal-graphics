@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
+#include "Datatypes.h"
 #include "Transform.h"
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -31,9 +33,10 @@ class Sprite {
     public:
         bool enabled;
         bool visible;
+        std::string key;
         Transform transform;
 
-        std::function<void(ProgramStateInfo)> OnFrame;
+        virtual void OnFrame(ProgramStateInfo program_state_info) = 0;
 
         virtual RasterizedSprite Rasterize() = 0;
 };

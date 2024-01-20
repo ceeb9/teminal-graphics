@@ -30,4 +30,6 @@ class Transform {
         void RotateClockwise(float degrees_to_rotate);
 
         void SetRotation(float new_rotation);
+
+        float GetDistanceTo(DiscretePoint other_point);
 };

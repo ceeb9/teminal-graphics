@@ -12,6 +12,7 @@ class Scene {
         std::unordered_map<std::string, Sprite*> sprite_table;
         std::vector<std::string> sprite_keys;
 
-        void OnFrame(ProgramStateInfo program_state_info);
+        virtual void OnFrame(ProgramStateInfo program_state_info) = 0;
+        void UpdateSprites(ProgramStateInfo program_state_info);
         std::vector<Pixel> RasterizeSprites();
 };

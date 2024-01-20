@@ -2,6 +2,8 @@
 #include <list>
 #include <string>
 
+class Scene; // forward def
+
 enum class InputStateChange {
     Q_UP,
     Q_DOWN,
@@ -15,6 +17,7 @@ class ProgramStateInfo {
         std::list<InputStateChange> input_queue;
         int canvas_size_x;
         int canvas_size_y;
+        Scene* scene;
 };
 
 class DiscretePoint {
