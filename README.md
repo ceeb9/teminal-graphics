@@ -1,6 +1,9 @@
 # terminal graphics
 
 this is just a simple project for me to learn c++, don't expect too much :)  
+compile with: `g++ -Wall Scene.cpp Renderer.cpp SceneManager.cpp Transform.cpp main.cpp Sprites/SpinningLine.cpp -o main`  
+obviously you need gcc for this  
+yes there is no makefile, i'll do it later
 
 ## initialization
 
